@@ -136,3 +136,13 @@ li {
   filter: drop-shadow(4px 4px 3px rgba(23, 14, 90, 0.3));
   margin-top: 10px;
 }
+.sing {
+  display: block;
+  margin: 0px auto;
+  font-size: 14px;
+  text-align: center;
+  color: rgb(130, 129, 129);
+}
+.open-code{
+  color: rgb(130, 129, 129);
+}
