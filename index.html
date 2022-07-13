@@ -51,7 +51,13 @@
       <div class="container main-block">
         <div class="row align-items-start">
           <div class="col text-center">
-            <img src="images/sun.png" alt="" width="80" class="images" />
+            <img
+              src="images/sun.png"
+              alt=""
+              width="80"
+              class="images"
+              id="weatherIcon"
+            />
             <span class="today-temperature">
               <span id="temp">20</span><span id="c">°C</span>
               <span id="f">/°F</span>
@@ -79,7 +85,8 @@
           </div>
           <div class="col place">
             <div id="city-name">Sumy</div>
-            <div id="country">Ukraine</div>
+            <div id="name-weather">Sunny</div>
+            <div id="description-weather">Sunny</div>
           </div>
         </div>
       </div>
@@ -88,19 +95,19 @@
       <div class="container">
         <div class="row text-center g-2">
           <div class="col next-weather-item">
-            <img src="images/sunCloud.png" alt="" width="40" class="images" />
+            <img src="images/sunCloud.png" alt="" width="40" class="images" id="weatherIcon"/>
             <div class="day" id="day-one">Monday</div>
             <div class="date" id="date-one">20 June</div>
             <div class="temp">10° / 20°</div>
           </div>
           <div class="col next-weather-item">
-            <img src="images/rain.png" alt="" width="40" class="images" />
+            <img src="images/rain.png" alt="" width="40" class="images" id="weatherIcon"/>
             <div class="day" id="day-two">Tuesday</div>
             <div class="date" id="date-two">21 June</div>
             <div class="temp">10° / 18°</div>
           </div>
           <div class="col next-weather-item">
-            <img src="images/fog.png" alt="" width="40" class="images" />
+            <img src="images/fog.png" alt="" width="40" class="images" id="weatherIcon"/>
             <div class="day" id="day-three">Wednesday</div>
             <div class="date" id="date-three">22 June</div>
             <div class="temp">10° / 25°</div>
@@ -111,6 +118,7 @@
               alt=""
               width="40"
               class="images"
+              id="weatherIcon"
             />
             <div class="day" id="day-four">Thursday</div>
             <div class="date" id="date-four">23 June</div>
@@ -126,7 +134,9 @@
       </div>
     </div>
     <div class="sing">
-      <a href="https://github.com/anna-podobrii/WeatherWeb.git" class="open-code"
+      <a
+        href="https://github.com/anna-podobrii/WeatherWeb.git"
+        class="open-code"
         >Open-source code
       </a>
       by Hanna Podobrii

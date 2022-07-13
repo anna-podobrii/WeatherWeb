@@ -19,7 +19,7 @@ div {
   border-radius: 0px 0px 20px 20px;
 }
 .images {
-  filter: drop-shadow(5px 5px 3px rgba(23, 14, 90, 0.5));
+  filter: drop-shadow(5px 5px 3px rgba(23, 14, 90, 0.4));
 }
 .row {
   margin: 20px 0px;
@@ -34,10 +34,10 @@ div {
 ul {
   list-style-type: none;
   font-size: 12px;
-  padding: 5px 0px;
+  padding: 0px 0px;
 }
 li {
-  padding: 5px 0px;
+  padding: 7px 0px;
 }
 .btnn {
   background: rgba(0, 0, 0, 0);
@@ -88,11 +88,11 @@ li {
 
 .today-temperature {
   display: block;
-  font-size: 50px;
+  font-size: 40px;
   font-weight: 400;
 }
 #c {
-  font-size: 50px;
+  font-size: 40px;
   font-weight: 400;
 }
 #f {
@@ -103,6 +103,15 @@ li {
   font-size: 30px;
   font-weight: 400;
   padding: 0px;
+}
+#name-weather {
+  font-size: 20px;
+  font-weight: 400;
+  margin-top: 30px;
+}
+#description-weather {
+  font-size: 14px;
+  font-weight: 400;
 }
 /* Next weather block */
 .next-weather-item {
@@ -143,6 +152,6 @@ li {
   text-align: center;
   color: rgb(130, 129, 129);
 }
-.open-code{
+.open-code {
   color: rgb(130, 129, 129);
 }

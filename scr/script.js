@@ -1,7 +1,11 @@
 // search Form
 var city = document.querySelector("#city-name");
-var country = document.querySelector("#country");
 var searchPlace = document.querySelector("#exampleDataList");
+
+function capitalizeFirstLetter(string) {
+  return string.charAt(0).toUpperCase() + string.slice(1);
+}
+
 function searchFormCity(event) {
   event.preventDefault();
   const arr = searchPlace.value.split(" ");
@@ -15,8 +19,20 @@ function searchFormCity(event) {
   function weather(response) {
     let currentTemperature = Math.round(response.data.main.temp);
     let weatherSentens = document.querySelector("#temp");
+    let weatherIcon = document.querySelector("#weatherIcon");
+    let weatherName = document.querySelector("#name-weather");
+    let weatherDescription = document.querySelector("#description-weather");
+
     weatherSentens.innerHTML = `${currentTemperature}`;
-    country.innerHTML = `${response.data.sys.country}`;
+    weatherIcon.setAttribute(
+      "src",
+      `images/${response.data.weather[0].icon}.png`
+    );
+    weatherName.innerHTML = `${response.data.weather[0].main}`;
+    weatherDescription.innerHTML = capitalizeFirstLetter(
+      `${response.data.weather[0].description}`
+    );
+    console.log(response);
   }
   axios.get(apiUrl).then(weather);
 }
@@ -29,9 +45,20 @@ function currentPosition(position) {
   function weatherCurrent(response) {
     let currentTemperature = Math.round(response.data.main.temp);
     let weatherSentens = document.querySelector("#temp");
+    let weatherIcon = document.querySelector("#weatherIcon");
+    let weatherName = document.querySelector("#name-weather");
+    let weatherDescription = document.querySelector("#description-weather");
+
     weatherSentens.innerHTML = `${currentTemperature}`;
     city.innerHTML = `${response.data.name}`;
-    country.innerHTML = `${response.data.sys.country}`;
+    weatherIcon.setAttribute(
+      "src",
+      `images/${response.data.weather[0].icon}.png`
+    );
+    weatherName.innerHTML = `${response.data.weather[0].main}`;
+    weatherDescription.innerHTML = capitalizeFirstLetter(
+      `${response.data.weather[0].description}`
+    );
   }
 
   axios.get(apiUrl).then(weatherCurrent);
