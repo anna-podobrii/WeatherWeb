@@ -3,10 +3,88 @@ var city = document.querySelector("#city-name");
 var searchPlace = document.querySelector("#exampleDataList");
 let apiKey = "8fa673d34c240a0cb12974c973229b0e";
 var apiUrl = `https://api.openweathermap.org/data/2.5/weather?q=Kyiv&appid=${apiKey}&units=metric`;
- 
+
 
 function capitalizeFirstLetter(string) {
   return string.charAt(0).toUpperCase() + string.slice(1);
+}
+function showDailyForecast(coordinates) {
+  let apiKey = "8fa673d34c240a0cb12974c973229b0e";
+  let apiUrl = `https://api.openweathermap.org/data/2.5/onecall?lat=${coordinates.lat}&lon=${coordinates.lon}&exclude=hourly&appid=${apiKey}&units=metric`;
+  axios.get(apiUrl).then(getDisplayForecast);
+}
+
+function formatDayWithTimestamp(timestamp) {
+  let date = new Date(timestamp * 1000);
+  // let day = date.getDate()
+let days = [
+    "Sunday",
+    "Monday",
+    "Tuesday",
+    "Wednesday",
+    "Thursday",
+    "Friday",
+    "Saturday",
+  ];
+   let day = `${days[date.getDay()]}`;
+  return day;
+}
+function formatDates(timestamp) {
+  let date = new Date(timestamp * 1000);
+  let months = [
+    "January",
+    "February",
+    "March",
+    "April",
+    "May",
+    "June",
+    "July",
+    "August",
+    "September",
+    "October",
+    "November",
+    "December",
+  ];
+
+  let info = `${date.getDate()} ${months[date.getMonth()]}`;
+  return info;
+}
+
+function getDisplayForecast(response) {
+  console.log(response.data.daily);
+  let forecastElement = document.querySelector("#forecast-place");
+  let forecasts = response.data.daily;
+  let forecastHTML = `<div class="row">`;
+  forecasts.forEach(function (dayForecast, index) {
+    if (index !== 0 && index < 6) {
+      forecastHTML =
+        forecastHTML +
+        `
+  <div class="col next-weather-item">
+    <img
+      src="images/${dayForecast.weather[0].icon}.png"
+      alt=""
+      width="40"
+      class="images"
+    />
+    <div class="day" id="day-o(ne">
+      ${formatDayWithTimestamp(dayForecast.dt)}
+    </div>
+    <div class="date" id="date-one">
+      ${formatDates(dayForecast.dt)}
+    </div>
+    <div class="temp"> <span id="forecast-min">${Math.round(
+      dayForecast.temp.min
+    )}</span>° / <span id="forecast-max">${Math.round(
+          dayForecast.temp.max
+        )}</span>°</div>
+  </div>`;
+    }
+    });
+  forecastHTML = forecastHTML + `</div>`;
+
+  forecastElement.innerHTML = forecastHTML;
+
 }
 
 function searchFormCity(event) {
@@ -16,7 +94,7 @@ function searchFormCity(event) {
     arr[i] = arr[i].charAt(0).toUpperCase() + arr[i].slice(1);
   }
   const searchPlaceGoorView = arr.join(" ");
-  city.innerHTML = searchPlaceGoorView
+  city.innerHTML = searchPlaceGoorView;
   apiUrl = `https://api.openweathermap.org/data/2.5/weather?q=${city.innerHTML}&appid=${apiKey}&units=metric`;
   axios.get(apiUrl).then(weatherCurrent);
 }
@@ -34,7 +112,10 @@ let searchCurrent = document.querySelector("#local-button");
 searchCurrent.addEventListener("click", getCurrentLocation);
 
 function weatherCurrent(response) {
-  let currentTemperature = Math.round(response.data.main.temp);
+  celsiusTemp = response.data.main.temp;
+  f.innerHTML = "/°F";
+  c.innerHTML = "°C";
+  let currentTemperature = Math.round(celsiusTemp);
   let weatherSentens = document.querySelector("#temp");
   let weatherIcon = document.querySelector("#weatherIcon");
   let weatherName = document.querySelector("#name-weather");
@@ -62,7 +143,7 @@ function weatherCurrent(response) {
   humidity.innerHTML = `${response.data.main.humidity}`;
   wind.innerHTML = `${response.data.wind.speed}`;
   presure.innerHTML = `${response.data.main.pressure}`;
-  console.log(response)
+  showDailyForecast(response.data.coord);
 }
 axios.get(apiUrl).then(weatherCurrent);
 // Date
@@ -97,70 +178,41 @@ function formatDate(date) {
 let dateString = document.querySelector("#date-string");
 dateString.innerHTML = formatDate(new Date());
 
-// Next Day Set
-function formatDays(date) {
-  let days = [
-    "Sunday",
-    "Monday",
-    "Tuesday",
-    "Wednesday",
-    "Thursday",
-    "Friday",
-    "Saturday",
-  ];
-  let info = `${days[date.getDay()]}`;
-  return info;
-}
-function formatDates(date) {
-  let months = [
-    "January",
-    "February",
-    "March",
-    "April",
-    "May",
-    "June",
-    "July",
-    "August",
-    "September",
-    "October",
-    "November",
-    "December",
-  ];
-
-  let info = `${date.getDate()}, ${months[date.getMonth()]}`;
-  return info;
-}
-function nextDaysInfo(dayString, dateString, dayNumber) {
-  var day = new Date();
-  var nextDay = new Date(day);
-  let dayOne = document.querySelector(dayString);
-  let dateOne = document.querySelector(dateString);
-  nextDay.setDate(day.getDate() + dayNumber);
-  dayOne.innerHTML = formatDays(nextDay);
-  dateOne.innerHTML = formatDates(nextDay);
-}
-nextDaysInfo("#day-one", "#date-one", 1);
-nextDaysInfo("#day-two", "#date-two", 2);
-nextDaysInfo("#day-three", "#date-three", 3);
-nextDaysInfo("#day-four", "#date-four", 4);
-nextDaysInfo("#day-five", "#date-five", 5);
-
-// Temperature
-
-let c = document.querySelector("#c");
-let f = document.querySelector("#f");
 let temp = document.querySelector("#temp");
-let tempC = 20;
-let tempF = (tempC * 9) / 5 + 32;
-function changTemp(event) {
+
+function changTemptrue(event) {
+  event.preventDefault();
+  
   if (f.innerHTML === "/°C") {
     f.innerHTML = "/°F";
     c.innerHTML = "°C";
-    temp.innerHTML = `${tempC}`;
+    let temp = document.querySelector("#temp");
+    let maxTemp = document.querySelector("#high");
+    let minTemp = document.querySelector("#low");
+    let cTemp = celsiusTemp;
+    let cMinTemp = ((minTemp.innerHTML - 32) * 5) / 9;
+     let cMaxTemp = ((maxTemp.innerHTML - 32) * 5) / 9;
+    temp.innerHTML = Math.round(cTemp);
+    maxTemp.innerHTML = Math.round(cMaxTemp);
+    minTemp.innerHTML = Math.round(cMinTemp);
   } else {
     f.innerHTML = "/°C";
     c.innerHTML = "°F";
-    temp.innerHTML = `${tempF}`;
+    let temp = document.querySelector("#temp");
+    let maxTemp = document.querySelector("#high");
+    let minTemp = document.querySelector("#low");
+    let fTemp = (celsiusTemp * 9) / 5 + 32;
+    let fMinTemp = (minTemp.innerHTML * 9) / 5 + 32;
+    let fMaxTemp = (maxTemp.innerHTML * 9) / 5 + 32;
+    temp.innerHTML = Math.round(fTemp);
+    maxTemp.innerHTML = Math.round(fMaxTemp);
+    minTemp.innerHTML = Math.round(fMinTemp);
   }
 }
-f.addEventListener("click", changTemp);
+let celsiusTemp = null;
+let f = document.querySelector("#f");
+let c = document.querySelector("#c");
+f.addEventListener("click", changTemptrue);
+
+
+
