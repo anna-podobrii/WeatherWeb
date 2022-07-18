@@ -1,23 +1,108 @@
 // search Form
 var city = document.querySelector("#city-name");
 var searchPlace = document.querySelector("#exampleDataList");
+var units = "metric";
 let apiKey = "8fa673d34c240a0cb12974c973229b0e";
-var apiUrl = `https://api.openweathermap.org/data/2.5/weather?q=Kyiv&appid=${apiKey}&units=metric`;
-
+var apiUrl = `https://api.openweathermap.org/data/2.5/weather?q=Kyiv&appid=${apiKey}&units=${units}`;
+var metricButtonFirst = "°C";
+var metricButtonTwo = "/°F";
+var windUnit = "m";
 
 function capitalizeFirstLetter(string) {
   return string.charAt(0).toUpperCase() + string.slice(1);
 }
 function showDailyForecast(coordinates) {
   let apiKey = "8fa673d34c240a0cb12974c973229b0e";
-  let apiUrl = `https://api.openweathermap.org/data/2.5/onecall?lat=${coordinates.lat}&lon=${coordinates.lon}&exclude=hourly&appid=${apiKey}&units=metric`;
+  let apiUrl = `https://api.openweathermap.org/data/2.5/onecall?lat=${coordinates.lat}&lon=${coordinates.lon}&exclude=hourly&appid=${apiKey}&units=${units}`;
   axios.get(apiUrl).then(getDisplayForecast);
+}
+function showMainCurrentTemp(city) {
+  let apiKey = "8fa673d34c240a0cb12974c973229b0e";
+  let apiUrl = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}&units=${units}`;
+  axios.get(apiUrl).then(getDisplayMainCurrentTemp);
+}
+function getDisplayMainCurrentTemp(response) {
+  let weatherElement = document.querySelector("#main-bar");
+  console.log(response);
+  let weather = response.data;
+  let description = capitalizeFirstLetter(
+    `${response.data.weather[0].description}`
+  );
+  let weatherHTML = `<div class="row">`;
+
+  weatherHTML =
+    weatherHTML +
+    `
+  <div class="col text-center">
+            <img
+              src="images/${weather.weather[0].icon}.png"
+              alt=""
+              width="80"
+              class="images"
+              id="weatherIcon"
+            />
+            <span class="today-temperature">
+              <span id="temp">${Math.round(
+                weather.main.temp
+              )}</span><span id="c">${metricButtonFirst}</span>
+              <a onclick="myFunction(this)" id="f">${metricButtonTwo}</a>
+            </span>
+          </div>
+          <div class="col">
+            <ul>
+              <li>
+                <img src="images/temp.png" alt="" width="20" />
+                High / Low <span id="high">${Math.round(
+                  weather.main.temp_max
+                )}</span>°/<span id="low">${Math.round(
+      weather.main.temp_min
+    )}</span>°
+              </li>
+              <li>
+                <img src="images/raindrops.png" alt="" width="20" />
+                Humidity <span id="humidity">${Math.round(
+                  weather.main.humidity
+                )}</span>%
+              </li>
+              <li>
+                <img src="images/wind.png" alt="" width="20" />
+                Wind <span id="wind">${weather.wind.speed}</span> ${windUnit}/h
+              </li>
+              <li>
+                <img src="images/presure.png" alt="" width="20" />
+                Pressure <span id="presure">${weather.main.pressure}</span> mb
+              </li>
+            </ul>
+          </div>
+          <div class="col place">
+            <div id="city-name">${weather.name}</div>
+            <div id="name-weather">${weather.weather[0].main}</div>
+            <div id="description-weather">${description}
+            </div>
+          </div>`;
+
+  weatherHTML = weatherHTML + `</div>`;
+  weatherElement.innerHTML = weatherHTML;
+}
+function myFunction(element) {
+  if (element.text === "/°F") {
+    metricButtonTwo = "/°C";
+    metricButtonFirst = "°F";
+    units = "imperial";
+    windUnit = "km";
+  } else {
+    metricButtonTwo = "/°F";
+    metricButtonFirst = "°C";
+    units = "metric";
+    windUnit = "m";
+  }
+  axios.get(apiUrl).then(weatherCurrent);
 }
 
 function formatDayWithTimestamp(timestamp) {
   let date = new Date(timestamp * 1000);
   // let day = date.getDate()
-let days = [
+  let days = [
     "Sunday",
     "Monday",
     "Tuesday",
@@ -26,7 +111,7 @@ let days = [
     "Friday",
     "Saturday",
   ];
-   let day = `${days[date.getDay()]}`;
+  let day = `${days[date.getDay()]}`;
   return day;
 }
 function formatDates(timestamp) {
@@ -51,7 +136,7 @@ function formatDates(timestamp) {
 }
 
 function getDisplayForecast(response) {
-  console.log(response.data.daily);
+  // console.log(response.data.daily);
   let forecastElement = document.querySelector("#forecast-place");
   let forecasts = response.data.daily;
   let forecastHTML = `<div class="row">`;
@@ -80,11 +165,9 @@ function getDisplayForecast(response) {
         )}</span>°</div>
   </div>`;
     }
-    });
+  });
   forecastHTML = forecastHTML + `</div>`;
-
   forecastElement.innerHTML = forecastHTML;
-
 }
 
 function searchFormCity(event) {
@@ -94,15 +177,14 @@ function searchFormCity(event) {
     arr[i] = arr[i].charAt(0).toUpperCase() + arr[i].slice(1);
   }
   const searchPlaceGoorView = arr.join(" ");
-  city.innerHTML = searchPlaceGoorView;
-  apiUrl = `https://api.openweathermap.org/data/2.5/weather?q=${city.innerHTML}&appid=${apiKey}&units=metric`;
+  apiUrl = `https://api.openweathermap.org/data/2.5/weather?q=${searchPlaceGoorView}&appid=${apiKey}&units=metric`;
   axios.get(apiUrl).then(weatherCurrent);
 }
 let searchForm = document.querySelector("#search-form");
 searchForm.addEventListener("submit", searchFormCity);
 
 function currentPosition(position) {
-  apiUrl = `https://api.openweathermap.org/data/2.5/weather?lat=${position.coords.latitude}&lon=${position.coords.longitude}&appid=${apiKey}&units=metric`;
+  apiUrl = `https://api.openweathermap.org/data/2.5/weather?lat=${position.coords.latitude}&lon=${position.coords.longitude}&appid=${apiKey}&units=${units}`;
   axios.get(apiUrl).then(weatherCurrent);
 }
 function getCurrentLocation() {
@@ -113,40 +195,39 @@ searchCurrent.addEventListener("click", getCurrentLocation);
 
 function weatherCurrent(response) {
   celsiusTemp = response.data.main.temp;
-  f.innerHTML = "/°F";
-  c.innerHTML = "°C";
-  let currentTemperature = Math.round(celsiusTemp);
-  let weatherSentens = document.querySelector("#temp");
-  let weatherIcon = document.querySelector("#weatherIcon");
-  let weatherName = document.querySelector("#name-weather");
-  let weatherDescription = document.querySelector("#description-weather");
-  let maxTemp = document.querySelector("#high");
-  let minTemp = document.querySelector("#low");
-  let humidity = document.querySelector("#humidity");
-  let wind = document.querySelector("#wind");
-  let presure = document.querySelector("#presure");
-  let minTemperature = Math.round(response.data.main.temp_min);
-  let maxTemperature = Math.round(response.data.main.temp_max);
+  // let currentTemperature = Math.round(response.data.main.temp);
+  // let weatherSentens = document.querySelector("#temp");
+  // let weatherIcon = document.querySelector("#weatherIcon");
+  // let weatherName = document.querySelector("#name-weather");
+  // let weatherDescription = document.querySelector("#description-weather");
+  // let maxTemp = document.querySelector("#high");
+  // let minTemp = document.querySelector("#low");
+  // let humidity = document.querySelector("#humidity");
+  // let wind = document.querySelector("#wind");
+  // let presure = document.querySelector("#presure");
+  // let minTemperature = Math.round(response.data.main.temp_min);
+  // let maxTemperature = Math.round(response.data.main.temp_max);
 
-  weatherSentens.innerHTML = `${currentTemperature}`;
-  city.innerHTML = `${response.data.name}`;
-  weatherIcon.setAttribute(
-    "src",
-    `images/${response.data.weather[0].icon}.png`
-  );
-  weatherName.innerHTML = `${response.data.weather[0].main}`;
-  weatherDescription.innerHTML = capitalizeFirstLetter(
-    `${response.data.weather[0].description}`
-  );
-  minTemp.innerHTML = `${minTemperature}`;
-  maxTemp.innerHTML = `${maxTemperature}`;
-  humidity.innerHTML = `${response.data.main.humidity}`;
-  wind.innerHTML = `${response.data.wind.speed}`;
-  presure.innerHTML = `${response.data.main.pressure}`;
+  // weatherSentens.innerHTML = `${currentTemperature}`;
+  // city.innerHTML = `${response.data.name}`;
+  // weatherIcon.setAttribute(
+  //   "src",
+  //   `images/${response.data.weather[0].icon}.png`
+  // );
+  // weatherName.innerHTML = `${response.data.weather[0].main}`;
+  // weatherDescription.innerHTML = capitalizeFirstLetter(
+  //   `${response.data.weather[0].description}`
+  // );
+  // minTemp.innerHTML = `${minTemperature}`;
+  // maxTemp.innerHTML = `${maxTemperature}`;
+  // humidity.innerHTML = `${response.data.main.humidity}`;
+  // wind.innerHTML = `${response.data.wind.speed}`;
+  // presure.innerHTML = `${response.data.main.pressure}`;
   showDailyForecast(response.data.coord);
+  showMainCurrentTemp(response.data.name);
 }
 axios.get(apiUrl).then(weatherCurrent);
-// Date
+
 function formatDate(date) {
   let days = [
     "Sunday",
@@ -177,42 +258,3 @@ function formatDate(date) {
 }
 let dateString = document.querySelector("#date-string");
 dateString.innerHTML = formatDate(new Date());
-
-let temp = document.querySelector("#temp");
-
-function changTemptrue(event) {
-  event.preventDefault();
-  
-  if (f.innerHTML === "/°C") {
-    f.innerHTML = "/°F";
-    c.innerHTML = "°C";
-    let temp = document.querySelector("#temp");
-    let maxTemp = document.querySelector("#high");
-    let minTemp = document.querySelector("#low");
-    let cTemp = celsiusTemp;
-    let cMinTemp = ((minTemp.innerHTML - 32) * 5) / 9;
-     let cMaxTemp = ((maxTemp.innerHTML - 32) * 5) / 9;
-    temp.innerHTML = Math.round(cTemp);
-    maxTemp.innerHTML = Math.round(cMaxTemp);
-    minTemp.innerHTML = Math.round(cMinTemp);
-  } else {
-    f.innerHTML = "/°C";
-    c.innerHTML = "°F";
-    let temp = document.querySelector("#temp");
-    let maxTemp = document.querySelector("#high");
-    let minTemp = document.querySelector("#low");
-    let fTemp = (celsiusTemp * 9) / 5 + 32;
-    let fMinTemp = (minTemp.innerHTML * 9) / 5 + 32;
-    let fMaxTemp = (maxTemp.innerHTML * 9) / 5 + 32;
-    temp.innerHTML = Math.round(fTemp);
-    maxTemp.innerHTML = Math.round(fMaxTemp);
-    minTemp.innerHTML = Math.round(fMinTemp);
-  }
-}
-let celsiusTemp = null;
-let f = document.querySelector("#f");
-let c = document.querySelector("#c");
-f.addEventListener("click", changTemptrue);
-
-
-
